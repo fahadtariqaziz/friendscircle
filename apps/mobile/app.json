@@ -1,0 +1,49 @@
+{
+  "expo": {
+    "name": "FriendsCircle",
+    "slug": "friendscircle",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "scheme": "friendscircle",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0F0F1A"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.friendscircle.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0F0F1A"
+      },
+      "package": "com.friendscircle.app"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#6C5CE7",
+          "defaultChannel": "default"
+        }
+      ],
+      "@sentry/react-native"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "your-eas-project-id"
+      }
+    },
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

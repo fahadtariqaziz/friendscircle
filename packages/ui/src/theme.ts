@@ -1,0 +1,56 @@
+export const theme = {
+  colors: {
+    primary: {
+      DEFAULT: "#6C5CE7",
+      dark: "#4A3ABA",
+      light: "#A29BFE",
+    },
+    accent: {
+      teal: "#00CEC9",
+      coral: "#FF6B6B",
+      amber: "#FDCB6E",
+      mint: "#55EFC4",
+    },
+    dark: {
+      bg: "#0F0F1A",
+      surface: "#1A1A2E",
+      surfaceLight: "#252542",
+      border: "#2D2D4A",
+      textPrimary: "#FFFFFF",
+      textSecondary: "#B0B0CC",
+      textMuted: "#6C6C8A",
+    },
+    light: {
+      bg: "#F8F9FE",
+      surface: "#FFFFFF",
+      surfaceLight: "#F0F0F8",
+      border: "#E8E8F0",
+      textPrimary: "#1A1A2E",
+      textSecondary: "#6C6C8A",
+      textMuted: "#9C9CB0",
+    },
+  },
+  borderRadius: {
+    card: 16,
+    button: 12,
+    pill: 999,
+    input: 12,
+  },
+  spacing: {
+    xs: 4,
+    sm: 8,
+    md: 12,
+    lg: 16,
+    xl: 24,
+    xxl: 32,
+  },
+  fontSize: {
+    caption: 12,
+    body: 14,
+    bodyLg: 16,
+    subtitle: 18,
+    title: 20,
+    heading: 24,
+    hero: 32,
+  },
+} as const;
