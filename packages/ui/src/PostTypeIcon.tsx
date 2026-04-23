@@ -5,17 +5,18 @@ const POST_TYPE_CONFIG: Record<
   PostType | "friend_circle",
   { label: string; emoji: string; color: string }
 > = {
-  friend_circle: { label: "Friends Circle", emoji: "👥", color: "text-primary" },
-  olx: { label: "Student OLX", emoji: "🛍️", color: "text-accent-amber" },
-  lost_found: { label: "Lost & Found", emoji: "🔎", color: "text-accent-coral" },
-  teacher_review: { label: "Teacher Reviews", emoji: "⭐", color: "text-accent-amber" },
-  past_paper: { label: "Past Papers", emoji: "📄", color: "text-primary-light" },
-  roommate: { label: "Roommate Finder", emoji: "🏠", color: "text-accent-teal" },
-  ride_share: { label: "Ride Share", emoji: "🚗", color: "text-accent-mint" },
-  freelance: { label: "Freelance Hub", emoji: "💼", color: "text-primary" },
-  job: { label: "Jobs", emoji: "💰", color: "text-accent-mint" },
-  event: { label: "Events", emoji: "🎉", color: "text-accent-coral" },
-  memory: { label: "Uni Memories", emoji: "📸", color: "text-accent-amber" },
+  friend_circle:  { label: "Friends Circle",        emoji: "👥", color: "text-primary" },
+  olx:            { label: "Student OLX",            emoji: "🛍️", color: "text-accent-amber" },
+  books:          { label: "Books",                  emoji: "📚", color: "text-accent-teal" },
+  lost_found:     { label: "Lost & Found",           emoji: "🔎", color: "text-accent-coral" },
+  teacher_review: { label: "Teacher Reviews",        emoji: "⭐", color: "text-accent-amber" },
+  past_paper:     { label: "Past Papers",            emoji: "📄", color: "text-primary-light" },
+  roommate:       { label: "Roommate Finder",        emoji: "🏠", color: "text-accent-teal" },
+  ride_share:     { label: "Ride Share",             emoji: "🚗", color: "text-accent-mint" },
+  freelance:      { label: "Freelance Assignments",  emoji: "💼", color: "text-primary" },
+  job:            { label: "Jobs",                   emoji: "💰", color: "text-accent-mint" },
+  event:          { label: "Events",                 emoji: "🎉", color: "text-accent-coral" },
+  memory:         { label: "Uni Memories",           emoji: "📸", color: "text-accent-amber" },
 };
 
 interface PostTypeIconProps {

@@ -6,6 +6,8 @@ import type {
   LOST_FOUND_TYPE,
   JOB_TYPE,
   FREELANCE_TYPE,
+  BOOK_CONDITION,
+  BOOKS_ACTION,
   USER_LEVELS,
 } from "./constants";
 
@@ -16,6 +18,8 @@ export type InviteStatus = (typeof INVITE_STATUS)[number];
 export type LostFoundType = (typeof LOST_FOUND_TYPE)[number];
 export type JobType = (typeof JOB_TYPE)[number];
 export type FreelanceType = (typeof FREELANCE_TYPE)[number];
+export type BookCondition = (typeof BOOK_CONDITION)[number];
+export type BooksAction = (typeof BOOKS_ACTION)[number];
 export type UserLevel = (typeof USER_LEVELS)[number];
 
 export interface Profile {
@@ -113,6 +117,15 @@ export interface MemoryMetadata {
   friend_names: string[];
 }
 
+export interface BooksMetadata {
+  action: BooksAction;      // "sell" | "buy"
+  book_title: string;
+  author?: string;
+  subject?: string;         // course / subject area
+  condition?: BookCondition; // for sell listings
+  price?: number;           // for sell listings (PKR)
+}
+
 export type PostMetadata =
   | OlxMetadata
   | LostFoundMetadata
@@ -124,6 +137,7 @@ export type PostMetadata =
   | JobMetadata
   | EventMetadata
   | MemoryMetadata
+  | BooksMetadata
   | Record<string, unknown>;
 
 export interface Post {
@@ -137,6 +151,7 @@ export interface Post {
   status: PostStatus;
   metadata: PostMetadata;
   image_urls: string[];
+  expires_at: string | null;
   created_at: string;
   updated_at: string;
   // Joined fields

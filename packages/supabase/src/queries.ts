@@ -3,8 +3,12 @@ import type { FilterInput } from "@friendscircle/shared";
 
 // ─── Auth ───────────────────────────────────────────────────────
 
-export async function signUp(email: string, password: string) {
-  return supabase.auth.signUp({ email, password });
+export async function signUp(email: string, password: string, fullName?: string) {
+  return supabase.auth.signUp({
+    email,
+    password,
+    options: fullName ? { data: { full_name: fullName } } : undefined,
+  });
 }
 
 export async function signIn(email: string, password: string) {
@@ -90,6 +94,36 @@ export async function updatePushToken(userId: string, pushToken: string) {
     .eq("id", userId);
 }
 
+// ─── New Members & Hellos ───────────────────────────────────────
+
+export async function getNewMembers(currentUserId: string, universityId?: string) {
+  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+  let query = supabase
+    .from("profiles")
+    .select("*, universities:university_id(name, short_name, city)")
+    .neq("id", currentUserId)
+    .not("vibe", "is", null)
+    .not("full_name", "is", null)
+    .gte("created_at", sevenDaysAgo)
+    .order("created_at", { ascending: false })
+    .limit(10);
+  if (universityId) query = (query as any).eq("university_id", universityId);
+  return query;
+}
+
+export async function sendHello(fromUserId: string, toUserId: string) {
+  return supabase
+    .from("hellos" as any)
+    .insert({ from_user_id: fromUserId, to_user_id: toUserId });
+}
+
+export async function getSentHellos(fromUserId: string) {
+  return supabase
+    .from("hellos" as any)
+    .select("to_user_id")
+    .eq("from_user_id", fromUserId);
+}
+
 // ─── Universities & Campuses ────────────────────────────────────
 
 export async function getUniversities() {
@@ -110,10 +144,12 @@ export async function getPosts(filters: Partial<FilterInput> & { user_id?: strin
   let query = supabase
     .from("posts")
     .select(
-      "*, profiles:user_id(*), universities:university_id(*), campuses:campus_id(*), comments(count)",
+      "*, profiles:user_id(id, full_name, avatar_url, level), universities:university_id(id, name, short_name), campuses:campus_id(id, name), comments(count)",
       { count: "exact" }
     )
     .eq("status", "approved")
+    // Only return non-expired posts (expires_at NULL means no expiry set on old rows)
+    .or(`expires_at.is.null,expires_at.gt.${new Date().toISOString()}`)
     .order("created_at", { ascending: false });
 
   if (filters.post_type) {
@@ -167,21 +203,23 @@ export async function deletePost(postId: string) {
 }
 
 // Get user's own posts (all statuses)
-export async function getMyPosts(userId: string) {
+export async function getMyPosts(userId: string, limit = 50) {
   return supabase
     .from("posts")
     .select("*, profiles:user_id(*), universities:university_id(*), campuses:campus_id(*)")
     .eq("user_id", userId)
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
+    .limit(limit);
 }
 
 // Admin: get pending posts
-export async function getPendingPosts() {
+export async function getPendingPosts(limit = 50) {
   return supabase
     .from("posts")
     .select("*, profiles:user_id(*)")
     .eq("status", "pending")
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
+    .limit(limit);
 }
 
 // Quick approve own post (for development / self-moderation)
@@ -306,20 +344,22 @@ export async function joinCircle(circleId: string, userId: string, email: string
 
 // ─── Comments ───────────────────────────────────────────────────
 
-export async function getComments(postId: string) {
+export async function getComments(postId: string, limit = 50) {
   return supabase
     .from("comments")
     .select("*, profiles:user_id(*)")
     .eq("post_id", postId)
-    .order("created_at", { ascending: true });
+    .order("created_at", { ascending: true })
+    .limit(limit);
 }
 
-export async function getCircleComments(circleId: string) {
+export async function getCircleComments(circleId: string, limit = 50) {
   return supabase
     .from("comments")
     .select("*, profiles:user_id(*)")
     .eq("circle_id", circleId)
-    .order("created_at", { ascending: true });
+    .order("created_at", { ascending: true })
+    .limit(limit);
 }
 
 export async function createComment(data: Record<string, unknown>) {
@@ -409,6 +449,7 @@ export async function getUserLikedIds(
 }
 
 // Batch: get likes counts for multiple items (avoids N+1)
+// Only fetches likeable_id column and caps at 1000 rows to limit payload
 export async function getBatchLikesCount(
   likeableType: string,
   likeableIds: string[]
@@ -418,7 +459,8 @@ export async function getBatchLikesCount(
     .from("likes")
     .select("likeable_id")
     .eq("likeable_type", likeableType)
-    .in("likeable_id", likeableIds);
+    .in("likeable_id", likeableIds)
+    .limit(1000);
 
   const counts = new Map<string, number>();
   for (const row of data || []) {

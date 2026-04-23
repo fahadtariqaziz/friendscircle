@@ -1,0 +1,34 @@
+  DROP TRIGGER IF EXISTS on_like_created ON likes;
+  DROP TRIGGER IF EXISTS on_post_moderated ON posts;
+  DROP TRIGGER IF EXISTS on_comment_created ON comments;
+  DROP TRIGGER IF EXISTS posts_updated_at ON posts;
+  DROP TRIGGER IF EXISTS reports_updated_at ON reports;
+  DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+
+  DROP FUNCTION IF EXISTS notify_on_hello() CASCADE;
+  DROP FUNCTION IF EXISTS notify_on_like() CASCADE;
+  DROP FUNCTION IF EXISTS notify_on_post_moderation() CASCADE;
+  DROP FUNCTION IF EXISTS notify_on_comment() CASCADE;
+  DROP FUNCTION IF EXISTS update_updated_at() CASCADE;
+  DROP FUNCTION IF EXISTS handle_new_user() CASCADE;
+
+  DROP TABLE IF EXISTS hellos CASCADE;
+  DROP TABLE IF EXISTS admin_actions CASCADE;
+  DROP TABLE IF EXISTS reports CASCADE;
+  DROP TABLE IF EXISTS notifications CASCADE;
+  DROP TABLE IF EXISTS likes CASCADE;
+  DROP TABLE IF EXISTS comments CASCADE;
+  DROP TABLE IF EXISTS friend_circle_invites CASCADE;
+  DROP TABLE IF EXISTS friend_circle_members CASCADE;
+  DROP TABLE IF EXISTS friend_circles CASCADE;
+  DROP TABLE IF EXISTS posts CASCADE;
+  DROP TABLE IF EXISTS profiles CASCADE;
+  DROP TABLE IF EXISTS campuses CASCADE;
+  DROP TABLE IF EXISTS universities CASCADE;
+
+  DROP TYPE IF EXISTS post_type CASCADE;
+  DROP TYPE IF EXISTS post_status CASCADE;
+  DROP TYPE IF EXISTS member_status CASCADE;
+  DROP TYPE IF EXISTS invite_status CASCADE;
+  DROP TYPE IF EXISTS user_level CASCADE;
+  DROP TYPE IF EXISTS likeable_type CASCADE;

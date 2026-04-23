@@ -1,6 +1,7 @@
 export const POST_TYPES = [
   "friend_circle",
   "olx",
+  "books",
   "lost_found",
   "teacher_review",
   "past_paper",
@@ -11,6 +12,12 @@ export const POST_TYPES = [
   "event",
   "memory",
 ] as const;
+
+export const BOOK_CONDITION = ["New", "Good", "Fair", "Poor"] as const;
+export const BOOKS_ACTION = ["sell", "buy"] as const;
+
+/** How long a post stays active before auto-deletion (in days) */
+export const POST_EXPIRY_DAYS = 30;
 
 export const POST_STATUS = ["pending", "approved", "rejected"] as const;
 

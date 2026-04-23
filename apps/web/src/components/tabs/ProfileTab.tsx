@@ -601,7 +601,7 @@ export function ProfileTab() {
                   value={editYear}
                   onChange={(e) => setEditYear(e.target.value)}
                   className="input-field"
-                  placeholder="e.g. 2024"
+                  placeholder="e.g. 2026"
                 />
               </div>
 
