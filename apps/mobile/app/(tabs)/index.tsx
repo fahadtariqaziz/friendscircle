@@ -16,7 +16,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useState, useCallback, useEffect, useMemo, useRef, memo } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import {
   getPosts,
   getProfile,
@@ -272,7 +272,7 @@ function AnimatedBell({ unreadCount, onPress }: { unreadCount: number; onPress: 
   }));
 
   return (
-    <Pressable onPress={onPress} style={styles.bellButton}>
+    <Pressable onPress={onPress} style={styles.bellButton} accessibilityRole="button" accessibilityLabel={`Notifications${unreadCount > 0 ? `, ${unreadCount} unread` : ""}`}>
       <Animated.View style={bellStyle}>
         <Bell color={theme.colors.dark.textSecondary} size={22} />
       </Animated.View>
@@ -321,7 +321,7 @@ function HomeHeader({
 
   return (
     <Animated.View entering={FadeInDown.duration(400)} style={styles.header}>
-      <Pressable onPress={() => router.push("/(tabs)/profile")} style={styles.headerLeft}>
+      <Pressable onPress={() => router.push("/(tabs)/profile")} style={styles.headerLeft} accessibilityRole="button" accessibilityLabel="Go to profile">
         <View style={styles.avatarContainer}>
           {profileLoading ? (
             <View style={[styles.avatar, { backgroundColor: "#1E1E38" }]} />
@@ -1783,6 +1783,7 @@ const PostCard = memo(function PostCard({
 }) {
   const scale = useSharedValue(1);
   const likeScale = useSharedValue(1);
+  const [bodyExpanded, setBodyExpanded] = useState(false);
   const typeConfig = POST_TYPE_CONFIG[post.post_type] || POST_TYPE_CONFIG.friend_circle;
   const badge = getPostBadge(post, likesCount);
   const hasImage = post.image_urls?.length > 0;
@@ -1860,7 +1861,14 @@ const PostCard = memo(function PostCard({
         <View style={styles.postBottomArea}>
           {/* Body */}
           {post.body ? (
-            <Text style={styles.postBody} numberOfLines={3}>{post.body}</Text>
+            <>
+              <Text style={styles.postBody} numberOfLines={bodyExpanded ? undefined : 3}>{post.body}</Text>
+              {!bodyExpanded && post.body.length > 120 && (
+                <Pressable onPress={() => setBodyExpanded(true)} hitSlop={8}>
+                  <Text style={{ color: theme.colors.primary.light, fontSize: 13, fontWeight: "600", marginTop: 4 }}>Read more</Text>
+                </Pressable>
+              )}
+            </>
           ) : null}
 
           {/* Type-specific metadata */}
@@ -1939,20 +1947,38 @@ export default function HomeScreen() {
   });
   const unreadCount = (notifData?.data as any[])?.filter((n: any) => !n.read).length || 0;
 
-  const buildFilters = useCallback(() => {
-    const base: Record<string, any> = { page: 1, limit: 20 };
+  const PAGE_SIZE = 20;
+
+  const buildFilters = useCallback((page: number) => {
+    const base: Record<string, any> = { page, limit: PAGE_SIZE };
     if (activeFilter === "Campus" && profile?.university_id) {
       base.university_id = profile.university_id;
     }
     return base;
   }, [activeFilter, profile?.university_id]);
 
-  const { data, isLoading, isError, refetch } = useQuery({
+  const {
+    data,
+    isLoading,
+    isError,
+    refetch,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
     queryKey: ["posts", "home", activeFilter, profile?.university_id],
-    queryFn: () => getPosts(buildFilters()),
+    queryFn: ({ pageParam = 1 }) => getPosts(buildFilters(pageParam)),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages) => {
+      const items = (lastPage?.data as any[]) || [];
+      return items.length >= PAGE_SIZE ? allPages.length + 1 : undefined;
+    },
   });
 
-  const rawPosts = (data?.data as any[]) || [];
+  const rawPosts = useMemo(
+    () => (data?.pages ?? []).flatMap((page) => (page?.data as any[]) || []),
+    [data],
+  );
   const postIds = useMemo(() => rawPosts.map((p) => p.id), [rawPosts]);
 
   const { data: likedIdsSet } = useQuery({
@@ -2199,6 +2225,15 @@ export default function HomeScreen() {
         style={{ flex: 1, backgroundColor: "transparent" }}
         ListHeaderComponent={headerElement}
         ListEmptyComponent={renderEmpty}
+        ListFooterComponent={
+          isFetchingNextPage ? (
+            <ActivityIndicator color={theme.colors.primary.DEFAULT} style={{ paddingVertical: 20 }} />
+          ) : null
+        }
+        onEndReached={() => {
+          if (hasNextPage && !isFetchingNextPage) fetchNextPage();
+        }}
+        onEndReachedThreshold={0.5}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}

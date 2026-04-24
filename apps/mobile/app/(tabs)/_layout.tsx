@@ -82,6 +82,8 @@ function CreateButton({ onPress, isFocused }: { onPress: () => void; isFocused: 
         scale.value = withSpring(1, { damping: 15, stiffness: 300 });
       }}
       style={[styles.createButton, buttonStyle]}
+      accessibilityRole="button"
+      accessibilityLabel="Create new post"
     >
       <Animated.View style={[styles.createButtonInner, glowStyle]}>
         <Plus color="white" size={26} strokeWidth={2.5} />
@@ -129,6 +131,9 @@ function TabItem({
         onPress();
       }}
       style={styles.tabItem}
+      accessibilityRole="tab"
+      accessibilityLabel={label}
+      accessibilityState={{ selected: isFocused }}
     >
       <Animated.View style={iconStyle}>
         <Icon

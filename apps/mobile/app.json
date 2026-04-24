@@ -15,14 +15,65 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.friendscircle.app"
+      "bundleIdentifier": "com.friendscircle.app",
+      "buildNumber": "1",
+      "infoPlist": {
+        "NSPhotoLibraryAddUsageDescription": "FriendsCircle needs access to save photos to your library."
+      },
+      "privacyManifests": {
+        "NSPrivacyCollectedDataTypes": [
+          {
+            "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeEmailAddress",
+            "NSPrivacyCollectedDataTypeLinked": true,
+            "NSPrivacyCollectedDataTypeTracking": false,
+            "NSPrivacyCollectedDataTypePurposes": ["NSPrivacyCollectedDataTypePurposeAppFunctionality"]
+          },
+          {
+            "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeName",
+            "NSPrivacyCollectedDataTypeLinked": true,
+            "NSPrivacyCollectedDataTypeTracking": false,
+            "NSPrivacyCollectedDataTypePurposes": ["NSPrivacyCollectedDataTypePurposeAppFunctionality"]
+          },
+          {
+            "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypePhotosorVideos",
+            "NSPrivacyCollectedDataTypeLinked": true,
+            "NSPrivacyCollectedDataTypeTracking": false,
+            "NSPrivacyCollectedDataTypePurposes": ["NSPrivacyCollectedDataTypePurposeAppFunctionality"]
+          },
+          {
+            "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeDeviceID",
+            "NSPrivacyCollectedDataTypeLinked": true,
+            "NSPrivacyCollectedDataTypeTracking": false,
+            "NSPrivacyCollectedDataTypePurposes": ["NSPrivacyCollectedDataTypePurposeAppFunctionality"]
+          },
+          {
+            "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeUserID",
+            "NSPrivacyCollectedDataTypeLinked": true,
+            "NSPrivacyCollectedDataTypeTracking": false,
+            "NSPrivacyCollectedDataTypePurposes": ["NSPrivacyCollectedDataTypePurposeAppFunctionality"]
+          },
+          {
+            "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeCrashData",
+            "NSPrivacyCollectedDataTypeLinked": false,
+            "NSPrivacyCollectedDataTypeTracking": false,
+            "NSPrivacyCollectedDataTypePurposes": ["NSPrivacyCollectedDataTypePurposeAppFunctionality"]
+          }
+        ],
+        "NSPrivacyTracking": false
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#0F0F1A"
       },
-      "package": "com.friendscircle.app"
+      "package": "com.friendscircle.app",
+      "versionCode": 1,
+      "permissions": [
+        "CAMERA",
+        "READ_MEDIA_IMAGES",
+        "NOTIFICATIONS"
+      ]
     },
     "plugins": [
       "expo-router",
@@ -39,8 +90,14 @@
     ],
     "extra": {
       "eas": {
-        "projectId": "your-eas-project-id"
+        "projectId": "ed8b5933-bc7f-4481-b28f-f59672dd355c"
       }
+    },
+    "updates": {
+      "url": "https://u.expo.dev/ed8b5933-bc7f-4481-b28f-f59672dd355c"
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
     },
     "experiments": {
       "typedRoutes": true

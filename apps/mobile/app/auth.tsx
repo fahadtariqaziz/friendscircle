@@ -283,6 +283,9 @@ function AnimatedButton({
           onPressOut={handlePressOut}
           disabled={loading}
           style={{ borderRadius: 14, overflow: "hidden", opacity: loading ? 0.7 : 1 }}
+          accessibilityRole="button"
+          accessibilityLabel={loading ? (loadingLabel || label) : label}
+          accessibilityState={{ disabled: loading }}
         >
           <LinearGradient
             colors={["#6C5CE7", "#8B7CF6", "#6C5CE7"]}
@@ -309,6 +312,8 @@ function AnimatedButton({
           onPressIn={handlePressIn}
           onPressOut={handlePressOut}
           style={[styles.googleButton, extraStyle]}
+          accessibilityRole="button"
+          accessibilityLabel={label}
         >
           {icon}
           <Text style={styles.googleButtonText}>{label}</Text>

@@ -23,7 +23,7 @@ import {
 import { theme } from "@friendscircle/ui";
 import { getTimeAgo } from "@friendscircle/shared";
 import { useState, useCallback, useEffect, useRef, memo } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 import { getPosts } from "@friendscircle/supabase";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
@@ -118,6 +118,7 @@ function Orb({
 
 const TrendingCard = memo(function TrendingCard({ post, index }: { post: any; index: number }) {
   const scale = useSharedValue(1);
+  const [imgLoading, setImgLoading] = useState(true);
   const cardStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
   }));
@@ -137,7 +138,19 @@ const TrendingCard = memo(function TrendingCard({ post, index }: { post: any; in
       >
         <LinearGradient colors={["#1E1E3A", "#16162A"]} style={StyleSheet.absoluteFillObject} />
         {post.image_urls?.length > 0 ? (
-          <Image source={{ uri: post.image_urls[0] }} style={styles.trendingImage} resizeMode="cover" />
+          <View>
+            <Image
+              source={{ uri: post.image_urls[0] }}
+              style={styles.trendingImage}
+              resizeMode="cover"
+              onLoadEnd={() => setImgLoading(false)}
+            />
+            {imgLoading && (
+              <View style={{ ...StyleSheet.absoluteFillObject, alignItems: "center", justifyContent: "center", backgroundColor: "#1C1C32" }}>
+                <ActivityIndicator color={typeColor} size="small" />
+              </View>
+            )}
+          </View>
         ) : (
           <LinearGradient
             colors={["#252540", "#1C1C32"]}
@@ -264,6 +277,7 @@ function SearchBar({
           onChangeText={onChangeText}
           onFocus={onFocus}
           style={styles.searchInput}
+          accessibilityLabel="Search posts"
         />
         {value.length > 0 && (
           <Pressable onPress={() => onChangeText("")}>
@@ -292,13 +306,29 @@ function CategoryDetail({
   const insets = useSafeAreaInsets();
   const [refreshing, setRefreshing] = useState(false);
 
-  const { data, isLoading, isError, refetch } = useQuery({
+  const CATEGORY_PAGE_SIZE = 20;
+
+  const {
+    data,
+    isLoading,
+    isError,
+    refetch,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
     queryKey: ["posts", "explore", feature.type],
-    queryFn: () => getPosts({ post_type: feature.type as any, page: 1, limit: 50 }),
+    queryFn: ({ pageParam = 1 }) =>
+      getPosts({ post_type: feature.type as any, page: pageParam, limit: CATEGORY_PAGE_SIZE }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages) => {
+      const items = (lastPage?.data as any[]) || [];
+      return items.length >= CATEGORY_PAGE_SIZE ? allPages.length + 1 : undefined;
+    },
     enabled: feature.type !== "friend_circle",
   });
 
-  const posts = (data?.data as any[]) || [];
+  const posts = (data?.pages ?? []).flatMap((page) => (page?.data as any[]) || []);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -382,7 +412,7 @@ function CategoryDetail({
         locations={[0, 0.6, 1]}
         style={[styles.detailHeader, { paddingTop: insets.top + 8 }]}
       >
-        <Pressable onPress={onBack} style={[styles.backButton, { borderColor: feature.color + "40", backgroundColor: feature.color + "15" }]}>
+        <Pressable onPress={onBack} style={[styles.backButton, { borderColor: feature.color + "40", backgroundColor: feature.color + "15" }]} accessibilityRole="button" accessibilityLabel="Go back">
           <ArrowLeft color={feature.color} size={20} />
         </Pressable>
         <View style={styles.detailHeaderContent}>
@@ -419,6 +449,15 @@ function CategoryDetail({
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={feature.color} />
           }
+          ListFooterComponent={
+            isFetchingNextPage ? (
+              <ActivityIndicator color={feature.color} style={{ paddingVertical: 20 }} />
+            ) : null
+          }
+          onEndReached={() => {
+            if (hasNextPage && !isFetchingNextPage) fetchNextPage();
+          }}
+          onEndReachedThreshold={0.5}
           removeClippedSubviews
           maxToRenderPerBatch={10}
           windowSize={5}

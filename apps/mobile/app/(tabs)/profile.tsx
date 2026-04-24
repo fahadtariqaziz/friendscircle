@@ -38,6 +38,7 @@ import {
 import { getTimeAgo } from "@friendscircle/shared";
 import {
   signOut,
+  deleteAccount,
   getProfile,
   getMyPosts,
   getMyComments,
@@ -840,6 +841,110 @@ const APP_FEATURES = [
   { emoji: "👥", label: "Friend Circles", desc: "Build your inner squad" },
 ];
 
+// ─── Delete Account Modal ─────────────────────────────────────────
+
+function DeleteAccountModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
+  const [deleting, setDeleting] = useState(false);
+
+  const handleDelete = () => {
+    Alert.alert(
+      "Final Confirmation",
+      "This is irreversible. All your posts, comments, likes, and profile data will be permanently erased.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Yes, Delete Everything",
+          style: "destructive",
+          onPress: async () => {
+            setDeleting(true);
+            const { error } = await deleteAccount();
+            setDeleting(false);
+            if (error) {
+              Alert.alert("Error", "Failed to delete account. Please try again or contact support@friendscircle.app");
+            } else {
+              onClose();
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  return (
+    <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" onRequestClose={onClose}>
+      <View style={{ flex: 1, backgroundColor: "#0F0F1A" }}>
+        {/* Header */}
+        <LinearGradient colors={["#2A1020", "#1A1235", "#0F0F1A"]} style={{ paddingTop: 20, paddingBottom: 32, alignItems: "center" }}>
+          <Pressable onPress={onClose} style={styles.aboutCloseBtn}>
+            <X color="#666" size={20} />
+          </Pressable>
+          <View style={{ width: 80, height: 80, borderRadius: 40, backgroundColor: "#FF475718", alignItems: "center", justifyContent: "center", marginBottom: 16, borderWidth: 1, borderColor: "#FF475730" }}>
+            <Text style={{ fontSize: 38 }}>⚠️</Text>
+          </View>
+          <Text style={{ color: "#FF4757", fontSize: 22, fontWeight: "800", marginBottom: 6 }}>Delete Account</Text>
+          <Text style={{ color: "rgba(255,255,255,0.5)", fontSize: 14, textAlign: "center", paddingHorizontal: 40 }}>
+            Please read carefully before proceeding
+          </Text>
+        </LinearGradient>
+
+        <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 20, paddingBottom: 40 }}>
+          {/* What will be deleted */}
+          <Text style={{ color: "rgba(255,255,255,0.4)", fontSize: 12, fontWeight: "700", letterSpacing: 1, marginBottom: 12 }}>WHAT WILL BE DELETED</Text>
+          <View style={{ backgroundColor: "#1E1E3A", borderRadius: 16, borderWidth: 1, borderColor: "#FF475715", overflow: "hidden", marginBottom: 24 }}>
+            <LinearGradient colors={["#1E1E3A", "#16162A"]} style={StyleSheet.absoluteFillObject} />
+            {[
+              { emoji: "📝", text: "All your posts and memories" },
+              { emoji: "💬", text: "All your comments" },
+              { emoji: "❤️", text: "All your likes" },
+              { emoji: "👤", text: "Your profile and avatar" },
+              { emoji: "⚡", text: "Your XP and level progress" },
+              { emoji: "🔔", text: "Your notification history" },
+            ].map((item, i, arr) => (
+              <View key={item.text} style={{ flexDirection: "row", alignItems: "center", gap: 14, paddingHorizontal: 16, paddingVertical: 14, borderBottomWidth: i < arr.length - 1 ? StyleSheet.hairlineWidth : 0, borderBottomColor: "#ffffff0A" }}>
+                <Text style={{ fontSize: 20 }}>{item.emoji}</Text>
+                <Text style={{ color: "rgba(255,255,255,0.7)", fontSize: 15 }}>{item.text}</Text>
+              </View>
+            ))}
+          </View>
+
+          {/* Warning card */}
+          <View style={{ backgroundColor: "#FF475710", borderRadius: 14, padding: 16, borderWidth: 1, borderColor: "#FF475720", marginBottom: 32 }}>
+            <Text style={{ color: "#FF6B6B", fontSize: 14, fontWeight: "600", marginBottom: 4 }}>This action cannot be undone</Text>
+            <Text style={{ color: "rgba(255,255,255,0.45)", fontSize: 13, lineHeight: 20 }}>
+              Once your account is deleted, there is no way to recover your data. If you're having issues, consider reaching out to our support team first.
+            </Text>
+          </View>
+
+          {/* Delete button */}
+          <Pressable
+            onPress={handleDelete}
+            disabled={deleting}
+            style={{ backgroundColor: "#FF4757", borderRadius: 14, paddingVertical: 16, alignItems: "center", justifyContent: "center", flexDirection: "row", gap: 8, opacity: deleting ? 0.6 : 1 }}
+            accessibilityRole="button"
+            accessibilityLabel="Delete my account permanently"
+          >
+            {deleting ? (
+              <ActivityIndicator color="#fff" size="small" />
+            ) : (
+              <>
+                <Trash2 color="#fff" size={18} />
+                <Text style={{ color: "#fff", fontSize: 16, fontWeight: "700" }}>Delete My Account</Text>
+              </>
+            )}
+          </Pressable>
+
+          {/* Cancel link */}
+          <Pressable onPress={onClose} style={{ alignItems: "center", marginTop: 16, paddingVertical: 12 }}>
+            <Text style={{ color: theme.colors.primary.light, fontSize: 15, fontWeight: "600" }}>Keep My Account</Text>
+          </Pressable>
+        </ScrollView>
+      </View>
+    </Modal>
+  );
+}
+
+// ─── About Modal ─────────────────────────────────────────────────
+
 function AboutModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
   return (
     <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" onRequestClose={onClose}>
@@ -918,7 +1023,7 @@ const FAQ_ITEMS = [
   { q: "How do I earn XP?", a: "Create posts, leave comments, and get likes. Each action rewards XP that levels you up!" },
   { q: "Why is my post pending?", a: "All posts are reviewed by admins before going live. This usually takes a few minutes." },
   { q: "How do I change my university?", a: "Go to Edit Profile and type your university name in the University field." },
-  { q: "Can I delete my account?", a: "Contact us via the feedback form and our team will help you within 24 hours." },
+  { q: "Can I delete my account?", a: "Yes — go to your Profile, scroll to Support, and tap 'Delete Account'. This will permanently remove all your data." },
 ];
 
 function HelpSupportModal({ visible, userId, onClose }: {
@@ -1314,6 +1419,7 @@ export default function ProfileScreen() {
   const [showEditProfile, setShowEditProfile] = useState(false);
   const [showShare, setShowShare] = useState(false);
   const [showAbout, setShowAbout] = useState(false);
+  const [showDeleteAccount, setShowDeleteAccount] = useState(false);
 
   const { data: profileData } = useQuery({
     queryKey: ["profile", user?.id],
@@ -1410,6 +1516,7 @@ export default function ProfileScreen() {
     { icon: HelpCircle, label: "Help & Support", iconColor: "#55EFC4", iconBg: "#55EFC420", onPress: () => setShowFeedback(true) },
     { icon: Share2, label: "Share App", iconColor: "#FDCB6E", iconBg: "#FDCB6E20", onPress: () => setShowShare(true) },
     { icon: Info, label: "About FriendsCircle", iconColor: "#A29BFE", iconBg: "#A29BFE20", onPress: () => setShowAbout(true) },
+    { icon: Trash2, label: "Delete Account", iconColor: "#FF4757", iconBg: "#FF475720", onPress: () => setShowDeleteAccount(true) },
   ];
 
   return (
@@ -1477,6 +1584,8 @@ export default function ProfileScreen() {
             <Pressable
               onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); setShowEditProfile(true); }}
               style={styles.editBtn}
+              accessibilityRole="button"
+              accessibilityLabel="Edit profile"
             >
               <LinearGradient colors={["#6C5CE7", "#8B7CF6"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={StyleSheet.absoluteFillObject} />
               <Edit3 color="white" size={15} />
@@ -1589,7 +1698,7 @@ export default function ProfileScreen() {
 
         {/* ─── SIGN OUT ─── */}
         <Animated.View entering={FadeInUp.delay(490).springify()} style={{ paddingHorizontal: 16, marginTop: 16 }}>
-          <Pressable onPress={handleSignOut} style={styles.signOutButton}>
+          <Pressable onPress={handleSignOut} style={styles.signOutButton} accessibilityRole="button" accessibilityLabel="Sign out">
             <LogOut color={theme.colors.accent.coral} size={17} />
             <Text style={styles.signOutText}>Sign Out</Text>
           </Pressable>
@@ -1601,6 +1710,7 @@ export default function ProfileScreen() {
       <ShareModal visible={showShare} profile={profile} postsCount={postsCount} commentsCount={commentsCount} onClose={() => setShowShare(false)} />
       <AboutModal visible={showAbout} onClose={() => setShowAbout(false)} />
       <HelpSupportModal visible={showFeedback} userId={user?.id || ""} onClose={() => setShowFeedback(false)} />
+      <DeleteAccountModal visible={showDeleteAccount} onClose={() => setShowDeleteAccount(false)} />
     </View>
   );
 }

@@ -86,7 +86,7 @@ const POST_TYPES = [
   { type: "past_paper",        label: "Past Paper",            emoji: "📄", color: "#A29BFE", desc: "Share exam resources" },
   { type: "roommate",          label: "Roommate",              emoji: "🏠", color: "#00CEC9", desc: "Find living mates" },
   { type: "ride_share",        label: "Ride Share",            emoji: "🚗", color: "#55EFC4", desc: "Split travel costs" },
-  { type: "freelance",         label: "Freelance Assignments", emoji: "💼", color: "#6C5CE7", desc: "Help with assignments" },
+  { type: "freelance",         label: "Freelance",             emoji: "💼", color: "#6C5CE7", desc: "Help with assignments" },
   { type: "job",               label: "Job",                   emoji: "💰", color: "#55EFC4", desc: "Post opportunities" },
   { type: "event",             label: "Event",                 emoji: "🎉", color: "#FF6B6B", desc: "Campus happenings" },
   { type: "memory",            label: "Memory",                emoji: "📸", color: "#FDCB6E", desc: "Share uni moments" },
@@ -133,9 +133,9 @@ function TypeCard({
         <View style={[styles.typeEmojiBg, { backgroundColor: item.color + "25" }]}>
           <Text style={{ fontSize: 26 }}>{item.emoji}</Text>
         </View>
-        <View style={{ flex: 1 }}>
-          <Text style={styles.typeLabel}>{item.label}</Text>
-          <Text style={[styles.typeDesc, { color: item.color + "AA" }]}>{item.desc}</Text>
+        <View style={{ flex: 1, overflow: "hidden" }}>
+          <Text style={styles.typeLabel} numberOfLines={1}>{item.label}</Text>
+          <Text style={[styles.typeDesc, { color: item.color + "AA" }]} numberOfLines={2}>{item.desc}</Text>
         </View>
       </AnimatedPressable>
     </Animated.View>
@@ -465,7 +465,8 @@ const successStyles = StyleSheet.create({
   },
   content: {
     alignItems: "center",
-    paddingHorizontal: 40,
+    paddingHorizontal: 100,
+    width: "100%",
   },
   ring: {
     position: "absolute",

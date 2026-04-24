@@ -15,6 +15,8 @@ import {
   handleNotificationResponse,
 } from "../lib/notifications";
 import { ONBOARDING_KEY } from "./onboarding";
+import { ErrorBoundary } from "../components/ErrorBoundary";
+import { OfflineBanner } from "../components/OfflineBanner";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -227,8 +229,10 @@ function RootLayout() {
 
   return (
     <SafeAreaProvider>
+      <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
+          <OfflineBanner />
           <StatusBar style="light" />
           <Stack
             screenOptions={{
@@ -247,6 +251,7 @@ function RootLayout() {
           </Stack>
         </AuthProvider>
       </QueryClientProvider>
+      </ErrorBoundary>
     </SafeAreaProvider>
   );
 }

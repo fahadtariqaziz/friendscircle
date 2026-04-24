@@ -32,6 +32,30 @@ export async function signOut() {
   return supabase.auth.signOut();
 }
 
+export async function deleteAccount() {
+  // Delete user's data first, then sign out.
+  // The actual auth.users row must be deleted via a Supabase Edge Function
+  // with service_role key (RLS prevents self-delete on auth.users).
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session?.user) return { error: { message: "Not authenticated" } };
+
+  const userId = session.user.id;
+
+  // Delete user-created content (order matters for FK constraints)
+  await supabase.from("likes").delete().eq("user_id", userId);
+  await supabase.from("comments").delete().eq("user_id", userId);
+  await supabase.from("notifications").delete().eq("user_id", userId);
+  await supabase.from("reports").delete().eq("user_id", userId);
+  await supabase.from("posts").delete().eq("user_id", userId);
+  await supabase.from("friend_circle_members").delete().eq("user_id", userId);
+  await supabase.from("profiles").delete().eq("id", userId);
+
+  // Sign out locally
+  await supabase.auth.signOut();
+
+  return { error: null };
+}
+
 export async function getSession() {
   return supabase.auth.getSession();
 }
