@@ -86,7 +86,7 @@
           "defaultChannel": "default"
         }
       ],
-      "@sentry/react-native"
+      ["@sentry/react-native", { "organization": "", "project": "", "uploadSourceMaps": false }]
     ],
     "extra": {
       "eas": {
