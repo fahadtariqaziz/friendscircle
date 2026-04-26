@@ -79,6 +79,7 @@ function Orb({ color, size, x, y, delay = 0 }: {
 // ─── Post Type Config ───────────────────────────────────────────
 
 const POST_TYPES = [
+  { type: "friend_circle",     label: "Friend Circle",         emoji: "👥", color: "#6C5CE7", desc: "Create your squad" },
   { type: "olx",                label: "Student OLX",          emoji: "🛍️", color: "#FDCB6E", desc: "Buy & sell on campus" },
   { type: "books",              label: "Books",                 emoji: "📚", color: "#00CEC9", desc: "Buy & sell textbooks" },
   { type: "lost_found",        label: "Lost & Found",          emoji: "🔎", color: "#FF6B6B", desc: "Help find lost items" },
@@ -260,6 +261,14 @@ function MetadataFields({
   );
 
   switch (type) {
+    case "friend_circle":
+      return (
+        <View>
+          {renderPicker("circle_type", "Circle Type", ["Study Group", "Hangout", "Sports", "Project"])}
+          {renderInput("max_members", "Max Members", "e.g. 8", "numeric")}
+          {renderPicker("open_to", "Open To", ["Anyone", "Same University"])}
+        </View>
+      );
     case "books":
       return (
         <View>
@@ -833,6 +842,7 @@ function getPlaceholder(type: string): string {
     case "freelance": return "What assignment do you need help with?";
     case "job": return "What's the job position?";
     case "memory": return "What's the memory?";
+    case "friend_circle": return "Name your circle";
     default: return "Title";
   }
 }

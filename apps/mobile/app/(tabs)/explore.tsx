@@ -325,7 +325,7 @@ function CategoryDetail({
       const items = (lastPage?.data as any[]) || [];
       return items.length >= CATEGORY_PAGE_SIZE ? allPages.length + 1 : undefined;
     },
-    enabled: feature.type !== "friend_circle",
+    enabled: true,
   });
 
   const posts = (data?.pages ?? []).flatMap((page) => (page?.data as any[]) || []);

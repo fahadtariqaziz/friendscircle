@@ -126,7 +126,6 @@ export async function getNewMembers(currentUserId: string, universityId?: string
     .from("profiles")
     .select("*, universities:university_id(name, short_name, city)")
     .neq("id", currentUserId)
-    .not("vibe", "is", null)
     .not("full_name", "is", null)
     .gte("created_at", sevenDaysAgo)
     .order("created_at", { ascending: false })

@@ -1131,6 +1131,23 @@ function PostMetadata({ post }: { post: any }) {
     );
   }
 
+  if (type === "friend_circle") {
+    if (!meta.circle_type && !meta.max_members && !meta.open_to) return null;
+    return (
+      <View style={styles.metaWrap}>
+        {meta.circle_type && (
+          <View style={[styles.metaStatusBadge, { backgroundColor: "#6C5CE720" }]}>
+            <Text style={{ color: "#6C5CE7", fontSize: 11, fontWeight: "700" }}>
+              {meta.circle_type.toUpperCase()}
+            </Text>
+          </View>
+        )}
+        {meta.max_members != null && <MetaChip icon={<Users color="#00CEC9" size={12} />} label="Max" value={`${meta.max_members}`} color="#00CEC9" />}
+        {meta.open_to && <MetaChip label="Open to" value={meta.open_to} color="#A29BFE" />}
+      </View>
+    );
+  }
+
   return null;
 }
 
@@ -1503,8 +1520,8 @@ function CommentModal({
   );
 
   return (
-    <Modal visible={visible} animationType="slide" transparent statusBarTranslucent>
-      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
+    <Modal visible={visible} animationType="slide" transparent statusBarTranslucent onRequestClose={onClose}>
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"}>
         <Pressable onPress={onClose} style={cStyles.overlay} />
         <View style={cStyles.sheet}>
           {/* Drag handle */}

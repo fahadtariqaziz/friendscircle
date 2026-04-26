@@ -59,11 +59,9 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
   segmentsRef.current = segments;
   const router = useRouter();
 
-  // Check onboarding completion on mount
+  // Skip onboarding — go straight to auth/setup flow
   useEffect(() => {
-    SecureStore.getItemAsync(ONBOARDING_KEY).then((val) => {
-      setOnboardingDone(val === "1");
-    });
+    setOnboardingDone(true);
   }, []);
 
   // Auth subscription

@@ -716,7 +716,7 @@ function ShareModal({ visible, profile, postsCount, commentsCount, onClose }: {
     .toUpperCase();
 
   return (
-    <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" onRequestClose={onClose}>
+    <Modal visible={visible} animationType="slide" statusBarTranslucent onRequestClose={onClose}>
       <View style={{ flex: 1, backgroundColor: "#0F0F1A" }}>
         {/* Header */}
         <LinearGradient colors={["#1A1235", "#0F0F1A"]} style={styles.shareModalHeader}>
@@ -871,7 +871,7 @@ function DeleteAccountModal({ visible, onClose }: { visible: boolean; onClose: (
   };
 
   return (
-    <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" onRequestClose={onClose}>
+    <Modal visible={visible} animationType="slide" statusBarTranslucent onRequestClose={onClose}>
       <View style={{ flex: 1, backgroundColor: "#0F0F1A" }}>
         {/* Header */}
         <LinearGradient colors={["#2A1020", "#1A1235", "#0F0F1A"]} style={{ paddingTop: 20, paddingBottom: 32, alignItems: "center" }}>
@@ -947,7 +947,7 @@ function DeleteAccountModal({ visible, onClose }: { visible: boolean; onClose: (
 
 function AboutModal({ visible, onClose }: { visible: boolean; onClose: () => void }) {
   return (
-    <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" onRequestClose={onClose}>
+    <Modal visible={visible} animationType="slide" statusBarTranslucent onRequestClose={onClose}>
       <View style={{ flex: 1, backgroundColor: "#0F0F1A" }}>
         <ScrollView showsVerticalScrollIndicator={false}>
           {/* ── Hero ── */}
@@ -1063,7 +1063,7 @@ function HelpSupportModal({ visible, userId, onClose }: {
   };
 
   return (
-    <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" onRequestClose={onClose}>
+    <Modal visible={visible} animationType="slide" statusBarTranslucent onRequestClose={onClose}>
       <KeyboardAvoidingView style={{ flex: 1, backgroundColor: "#0F0F1A" }} behavior={Platform.OS === "ios" ? "padding" : "height"}>
         <ScrollView contentContainerStyle={{ paddingBottom: 60 }} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
 
@@ -1270,7 +1270,7 @@ function EditProfileModal({ visible, profile, userId, onClose }: {
   };
 
   return (
-    <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" onRequestClose={onClose}>
+    <Modal visible={visible} animationType="slide" statusBarTranslucent onRequestClose={onClose}>
       <KeyboardAvoidingView style={{ flex: 1, backgroundColor: "#0F0F1A" }} behavior={Platform.OS === "ios" ? "padding" : "height"}>
         {/* Header */}
         <LinearGradient colors={["#1A1235", "#0F0F1A"]} style={styles.shareModalHeader}>
